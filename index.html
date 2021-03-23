@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Facebook Login JavaScript Example</title>
+<meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"></head>
+</head>
+<body>
+    
+<script>
+
+  function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
+    var x = document.getElementById('status');
+    var content = document.getElementById('content');
+
+    console.log('statusChangeCallback');
+    console.log(response);                   // The current login status of the person.
+    if (response.status === 'connected') {   // Logged into your webpage and Facebook.
+        content.style.display = 'block';
+        x.style.display = 'none';
+      testAPI();  
+    } else {                                 // Not logged into your webpage or we are unable to tell.
+    //   document.getElementById('status').innerHTML = 'Please log ' +
+    //     'into this webpage.';
+        content.style.display = 'none';
+        x.style.display = 'block';
+    }
+  }
+
+
+  function checkLoginState() {               // Called when a person is finished with the Login Button.
+    FB.getLoginStatus(function(response) {   // See the onlogin handler
+      statusChangeCallback(response);
+    });
+  }
+
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '120541073283366',
+      cookie     : true,                     // Enable cookies to allow the server to access the session.
+      xfbml      : true,                     // Parse social plugins on this webpage.
+      version    : 'v9.0'           // Use this Graph API version for this call.
+    });
+
+
+    FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
+      statusChangeCallback(response);        // Returns the login status.
+    });
+  };
+ 
+  function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me','GET',{"fields":"id,email,first_name,middle_name,last_name,birthday,location,about,age_range,education,interested_in"}, function(response) {
+      console.log('Successful login for: ' + response);
+    //   document.getElementById('status').innerHTML =
+    //     'Thanks for logging in, ' + response.name + '!';
+      document.getElementById('_em').value = getVal(response.email);
+      document.getElementById('_fname').value = getVal(response.first_name);
+      document.getElementById('_mname').value = getVal(response.middle_name);
+      document.getElementById('_lname').value = getVal(response.last_name);
+      document.getElementById('_age').value = callAge(response.birthday);
+      document.getElementById('_province').value = getProvince(response.location.name);
+    });
+  }
+
+  function getVal(val) {
+    console.log(val);
+    if(val === undefined) { return ''; }
+    return val;
+  }
+  function getProvince(val) {
+    return val.substring(val.lastIndexOf(' '),0);
+  }
+
+  function callAge(dobinput) {
+    if(dobinput === undefined) { return ''; }
+    var dob = new Date(dobinput);
+    var today = new Date();
+    var diff = today.getTime() - dob.getTime();
+    var res = Math.floor(diff / (1000*60*60*24*365.25));
+    return res;
+  }
+
+</script>
+
+<script>
+    function fbLogout() {
+            FB.logout(function (response) {
+                //Do what ever you want here when logged out like reloading the page
+                window.location.reload();
+            });
+        }
+</script>
+    
+<!-- The JS SDK Login Button -->
+
+<!-- <div id="statuss">
+    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+    </fb:login-button>
+</div> -->
+
+<!-- Load the JS SDK asynchronously -->
+
+<div id="status" class="container" style="text-align: center;margin-top: 10%;">
+    <div class="row">
+        <div class="col-5" style="margin:auto;">
+            <img src="icon.PNG">
+        </div>
+        
+    </div>
+    <div class="row">
+    <div class="col-5 form-control" style="margin:auto;padding-bottom: 150px;">
+        <div class="col">
+            <h3 class="text-success" style="padding: 15px 0px 50px 0px;">
+                K-Econ Analysis &
+                <br>K-Business Analysis
+            </h3>
+            <p></p>
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-success" style="width: 380px;">
+                สมัครสมาชิก
+            </button>
+        </div>
+        <div class="col">
+            <p></p>
+            <span class="text-muted">หรือ</span>
+            <p></p>
+        </div>
+        <div class="col">
+            <div class="fb-login-button" data-width="380" 
+            data-scope="public_profile,user_birthday,user_location,email"
+            data-size="large" 
+            data-button-type="login_with" 
+            data-layout="default" 
+            data-auto-logout-link="true" 
+            data-use-continue-as="true"></div>
+        </div>
+        <div class="col">
+            <p></p>
+            <a href="." class="text-dark">เข้าสู่ระบบ</a>
+        </div>
+
+    </div>
+    </div>
+</div>
+
+<div id="content">
+<div class="container">
+<div class="row">
+    <div class="col-2">
+        <img src="icon.PNG">
+    </div>
+    <div class="col-10" style="text-align: right;margin: auto;">
+        <h3>สมัครสมาชิก K-Econ Analysis</h3>
+    </div>
+</div>
+</div>
+<div class="row">&nbsp;</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col input-group">
+            <img src="personicon.PNG"><h5>ข้อมูลผู้สมัคร</h5>
+        </div>
+    </div>
+
+    <div class="row form-group" style="margin-top: 5px;">
+      <div class="col-6">
+        <input id="_em" type="text" class="form-control" placeholder="อีเมล">
+      </div>
+    </div>
+    <div class="row form-group">
+      <div class="col-4">
+        <input id="_fname" type="text" class="form-control" placeholder="ชื่อ">
+      </div>
+      <div class="col-4">
+        <input id="_mname" type="text" class="form-control" placeholder="ชื่อกลาง">
+      </div> 
+      <div class="col-4">
+        <input id="_lname" type="text" class="form-control" placeholder="นามสกุล">
+      </div>             
+    </div>
+
+    <div class="row form-group">
+      <div class="col-6">
+        <input id="_age" type="text" class="form-control" placeholder="อายุ">
+      </div>
+      <div class="col-6">
+        <input id="_tel" type="text" class="form-control" placeholder="เบอร์โทร">
+      </div>      
+    </div>
+
+    <div class="row form-group">
+      <div class="col-12">
+        <input id="_addr" type="text" class="form-control" placeholder="ที่อยู่">
+      </div>         
+    </div>
+
+    <div class="row form-group">
+      <div class="col-6">
+        <input id="_province" type="text" class="form-control" placeholder="จังหวัด">
+      </div>
+      <div class="col-6">
+         <input id="_amphoe" type="text" class="form-control" placeholder="เยต/อำเภอ"> 
+      </div>         
+    </div>
+
+    <div class="row form-group">
+      <div class="col-6">
+            <input id="_tambon" type="text" class="form-control" placeholder="แขวง/ตำบล">
+      </div>
+      <div class="col-6">
+            <input id="_zipcode" type="text" class="form-control" placeholder="รหัสไปรษณีย์">
+      </div>         
+    </div>
+
+  </div>
+  <div class="row">&nbsp;</div>
+<div class="container">
+    <div class="row">
+        <div class="col input-group">
+            <img src="personicon.PNG"><h5>ข้อมูลการทำงาน</h5>
+        </div>
+    </div>
+    <div class="row form-group" style="margin-top: 5px;">
+        <div class="col-6">
+            <input id="_job" type="text" class="form-control" placeholder="ตำแหน่งาน">
+        </div>
+        <div class="col-6">
+            <input id="_bustype" type="text" class="form-control" placeholder="ประเภทธุรกิจ">
+        </div>         
+      </div>
+    <div class="col" style="text-align: center;">
+        <button type="button" class="btn btn-primary" onclick="fbLogout()">
+            <i class="fab fa-facebook"></i> Logout
+        </button>
+    </div>
+</div>
+</div>
+
+
+
+
+
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v9.0" nonce="0f44gD4p"></script>
+</body>
+</html>
